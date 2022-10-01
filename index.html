@@ -1,6 +1,6 @@
 <html>
     <head>
-        <link rel="stylesheet" href="index.css">
+        <!--<link rel="stylesheet" href="index.css">-->
     </head>
     <body>
         <div class="container">
@@ -29,6 +29,335 @@
             <button id="rollBtn">Roll Dice 🎲</button>
             <button id="resetBtn">Reset Game 🔁</button>
         </div>
-        <script src="index.js"></script>
+        <!--<script src="index.js"></script>-->
     </body>
 </html>
+<style>
+    html, body { 
+    --color-1: #a8e6cf;
+    --color-2: #dcedc1; 
+    --color-3: #ffd3b6; 
+    --color-4: #ffaaa5; 
+    --color-5: #ff8b94;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    padding-top: 50px;
+    background-image: linear-gradient(135deg, var(--color-1) , var(--color-2));
+    font-family: 'Roboto', sans-serif;
+    height: 100vh;
+    color: black;
+}
+
+.container {
+    width: 80vw;
+    height: 70vh;
+    text-align: center;
+    margin: 0 auto;
+    background-color: white;
+    box-shadow: -2px 6px 18px 3px rgba(0,0,0,0.75);
+    padding: 50px;
+}
+
+.players {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+}
+
+#message {
+    margin-top: 5vw;
+    font-size: 5vw;
+}
+
+.dice {
+    border-radius: 10px;
+    min-width: 150px;
+    min-height: 150px;
+    background-color: var(--color-3);
+    margin: 0 auto;
+    font-size: 120px;
+    display: block;
+    align-items: center;
+    justify-content: center;
+}
+
+
+button {
+    color: #fff;
+    padding: 20px 30px;
+    font-size: 4vw;
+    margin: 40px auto;
+    margin-top: 80px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#rollBtn {
+    background-color: var(--color-5);
+}
+
+#resetBtn {
+    background-color: var(--color-4);
+}
+
+button:focus {
+    outline: none;
+}
+
+#resetBtn {
+    display: none;
+}
+
+.active {
+    box-shadow: -2px 6px 18px 3px rgba(0,0,0,0.75);
+}
+
+#cow {
+    position: absolute;
+    font-size: 100px;
+    margin-top: -100px;
+    margin-left: 500px;
+    white-space: nowrap;
+    display: none;
+}
+#sheep {
+    position: absolute;
+    font-size: 100px;
+    margin-top: -200px;
+    margin-left: 500px;
+    white-space: nowrap;
+    display: none;
+}
+#cow3 {
+    position: absolute;
+    font-size: 100px;
+    margin-top: -300px;
+    margin-left: 500px;
+    white-space: nowrap;
+    display: none;
+}
+#cow4 {
+    position: absolute;
+    font-size: 100px;
+    margin-top: -400px;
+    margin-left: 500px;
+    white-space: nowrap;
+    display: none;
+}
+#cow5 {
+    position: absolute;
+    font-size: 100px;
+    margin-top: 0px;
+    margin-left: 500px;
+    white-space: nowrap;
+    display: none;
+}
+#cow6 {
+    position: absolute;
+    font-size: 100px;
+    margin-top: 100px;
+    margin-left: 500px;
+    white-space: nowrap;
+    display: none;
+}
+#mooAudio {
+    display: none;
+}
+input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+</style>
+<script>
+    // Create variables for the game state
+let player1Score = 0
+let player2Score = 0
+let player1Turn = true
+
+// Create variables to store references to the necessary DOM nodes
+const player1Dice = document.getElementById("player1Dice")
+const player2Dice = document.getElementById("player2Dice")
+const player1Scoreboard = document.getElementById("player1Scoreboard")
+const player2Scoreboard = document.getElementById("player2Scoreboard")
+const message = document.getElementById("message")
+const rollBtn = document.getElementById("rollBtn")
+const resetBtn = document.getElementById("resetBtn")
+const cowEmoji = document.getElementById("cow")
+
+function showResetButton() {
+    rollBtn.style.display = "none"
+    resetBtn.style.display = "block"
+}
+
+/* Hook up a click event listener to the Roll Dice Button. */
+ rollBtn.addEventListener("click", function() {
+    const randomNumber = Math.floor(Math.random() * 6) + 1
+
+    if (player1Turn) {
+        player1Score += randomNumber
+        player1Scoreboard.textContent = player1Score
+        player1Dice.textContent = randomNumber
+        player1Dice.classList.remove("active")
+        player2Dice.classList.add("active")
+        message.textContent = "Player 2 Turn"
+    } else {
+        player2Score += randomNumber
+        player2Scoreboard.textContent = player2Score
+        player2Dice.textContent = randomNumber
+        player2Dice.classList.remove("active")
+        player1Dice.classList.add("active")
+        message.textContent = "Player 1 Turn"
+    }
+    
+    if (player1Score >= 20) {
+        message.textContent = "Player 1 Won 🥳"
+        showResetButton()
+        cow()
+        cow2()
+        cow3()
+        cow4()
+        cow5()
+        cow6()
+        PlaySound()
+    }  else if (player2Score >= 20) {
+        message.textContent = "Player 2 Won 🎉"
+        showResetButton()
+        cow()
+        cow2()
+        cow3()
+        cow4()
+        cow5()
+        cow6()
+        PlaySound()
+    }
+    player1Turn = !player1Turn
+})
+ 
+resetBtn.addEventListener("click", function(){
+    reset()
+})
+
+function reset() {
+    player1Score = 0
+    player2Score = 0
+    player1Turn = true
+    player1Scoreboard.textContent = 0
+    player2Scoreboard.textContent = 0
+    player1Dice.textContent = "-"
+    player2Dice.textContent = "-"
+    message.textContent = "Player 1 Turn"
+    resetBtn.style.display = "none"
+    rollBtn.style.display = "block"
+    player2Dice.classList.remove("active")
+    player1Dice.classList.add("active")
+}
+
+function cow() {
+    let id = null
+    let pos = 150
+  clearInterval(id)
+  cowEmoji.style.display = "block"
+  id = setInterval(frame, 6)
+  function frame() {
+    if (pos == -7500) {
+      clearInterval(id)
+    } else {
+      pos = pos - 10 
+      cowEmoji.style.left = pos + "px"
+    }
+  }
+}
+function cow2() {
+  let id = null;
+  const elem = document.getElementById("sheep")
+  elem.style.display = "block"
+  let pos = 150
+  clearInterval(id)
+  id = setInterval(frame, 5)
+  function frame() {
+    if (pos == -7500) {
+      clearInterval(id)
+    } else {
+      pos = pos - 10
+      elem.style.left = pos + 'px'
+    }
+  }
+}
+function cow3() {
+  let id = null
+  const elem = document.getElementById("cow3")
+  elem.style.display = "block"
+  let pos = 150
+  clearInterval(id)
+  id = setInterval(frame, 5)
+  function frame() {
+    if (pos == -7500) {
+      clearInterval(id)
+    } else {
+      pos = pos - 10
+      elem.style.left = pos + 'px'
+    }
+  }
+}
+function cow4() {
+  let id = null
+  const elem = document.getElementById("cow4")
+  elem.style.display = "block"
+  let pos = 150
+  clearInterval(id)
+  id = setInterval(frame, 5)
+  function frame() {
+    if (pos == -7500) {
+      clearInterval(id)
+    } else {
+      pos = pos - 10
+      elem.style.left = pos + 'px'
+    }
+  }
+}
+function cow5() {
+  let id = null
+  const elem = document.getElementById("cow5")
+  let pos = 150
+  clearInterval(id)
+  elem.style.display = "block"
+  id = setInterval(frame, 5)
+  function frame() {
+    if (pos == -7500) {
+      clearInterval(id)
+    } else {
+      pos = pos - 10
+      elem.style.left = pos + 'px'
+    }
+  }
+}
+function cow6() {
+  let id = null
+  const elem = document.getElementById("cow6")
+  let pos = 150
+  clearInterval(id)
+  elem.style.display = "block"
+  id = setInterval(frame, 5)
+  function frame() {
+    if (pos == -7500) {
+      clearInterval(id)
+    } else {
+      pos = pos - 10
+      elem.style.left = pos + 'px'
+    }
+  }
+}
+function PlaySound() {
+      var sound = document.getElementById("mooAudio")
+      sound.play()
+  }
+  
+
+
+</script>
